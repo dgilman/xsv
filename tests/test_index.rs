@@ -22,6 +22,6 @@ fn index_outdated() {
 }
 
 fn future_time(ft: FileTime) -> FileTime {
-    let secs = ft.seconds_relative_to_1970();
-    FileTime::from_seconds_since_1970(secs + 10_000, 0)
+    let secs = ft.unix_seconds();
+    FileTime::from_unix_time(secs + 10_000, 0)
 }
