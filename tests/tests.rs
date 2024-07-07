@@ -15,7 +15,7 @@ use std::fmt;
 use std::mem::transmute;
 use std::ops;
 
-use quickcheck::{Arbitrary, Gen, QuickCheck, StdGen, Testable};
+use quickcheck::{Arbitrary, Gen, QuickCheck, Testable};
 use rand::{Rng, thread_rng};
 
 macro_rules! svec[
@@ -53,11 +53,11 @@ mod test_stats;
 mod test_table;
 
 fn qcheck<T: Testable>(p: T) {
-    QuickCheck::new().gen(StdGen::new(thread_rng(), 5)).quickcheck(p);
+    QuickCheck::new().gen(Gen::new(5)).quickcheck(p);
 }
 
 fn qcheck_sized<T: Testable>(p: T, size: usize) {
-    QuickCheck::new().gen(StdGen::new(thread_rng(), size)).quickcheck(p);
+    QuickCheck::new().gen(Gen::new(size)).quickcheck(p);
 }
 
 pub type CsvVecs = Vec<Vec<String>>;
@@ -97,8 +97,9 @@ impl fmt::Debug for CsvRecord {
 }
 
 impl Arbitrary for CsvRecord {
-    fn arbitrary<G: Gen>(g: &mut G) -> CsvRecord {
-        let size = { let s = g.size(); g.gen_range(1, s) };
+    fn arbitrary(g: &mut Gen) -> CsvRecord {
+        let mut rng = thread_rng();
+        let size = { let s = g.size(); rng.gen_range(1, s) };
         CsvRecord((0..size).map(|_| Arbitrary::arbitrary(g)).collect())
     }
 
@@ -136,9 +137,10 @@ impl ops::Deref for CsvData {
 }
 
 impl Arbitrary for CsvData {
-    fn arbitrary<G: Gen>(g: &mut G) -> CsvData {
-        let record_len = { let s = g.size(); g.gen_range(1, s) };
-        let num_records: usize = g.gen_range(0, 100);
+    fn arbitrary(g: &mut Gen) -> CsvData {
+        let mut rng = thread_rng();
+        let record_len = { let s = g.size(); rng.gen_range(1, s) };
+        let num_records: usize = rng.gen_range(0, 100);
         CsvData{
             data: (0..num_records).map(|_| {
                 CsvRecord((0..record_len)
