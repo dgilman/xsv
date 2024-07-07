@@ -99,7 +99,7 @@ impl fmt::Debug for CsvRecord {
 impl Arbitrary for CsvRecord {
     fn arbitrary(g: &mut Gen) -> CsvRecord {
         let mut rng = thread_rng();
-        let size = { let s = g.size(); rng.gen_range(1, s) };
+        let size = { let s = g.size(); rng.gen_range(1..s) };
         CsvRecord((0..size).map(|_| Arbitrary::arbitrary(g)).collect())
     }
 
@@ -139,8 +139,8 @@ impl ops::Deref for CsvData {
 impl Arbitrary for CsvData {
     fn arbitrary(g: &mut Gen) -> CsvData {
         let mut rng = thread_rng();
-        let record_len = { let s = g.size(); rng.gen_range(1, s) };
-        let num_records: usize = rng.gen_range(0, 100);
+        let record_len = { let s = g.size(); rng.gen_range(1..s) };
+        let num_records: usize = rng.gen_range(0..100);
         CsvData{
             data: (0..num_records).map(|_| {
                 CsvRecord((0..record_len)
