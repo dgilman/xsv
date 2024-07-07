@@ -150,7 +150,7 @@ impl Args {
             });
         }
         drop(send);
-        Ok((headers, merge_all(recv).unwrap_or_else(Vec::new)))
+        Ok((headers, merge_all(recv.iter()).unwrap_or_else(Vec::new)))
     }
 
     fn stats_to_records(&self, stats: Vec<Stats>) -> Vec<csv::StringRecord> {

@@ -160,7 +160,7 @@ impl Args {
             });
         }
         drop(send);
-        Ok((headers, merge_all(recv).unwrap()))
+        Ok((headers, merge_all(recv.iter()).unwrap()))
     }
 
     fn ftables<I>(&self, sel: &Selection, it: I) -> CliResult<FTables>
